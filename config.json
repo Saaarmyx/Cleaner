@@ -1,0 +1,25 @@
+{
+  "limpiar_navegadores": true,
+  "limpiar_windows_update": true,
+  "limpiar_logs": true,
+  "limpiar_dumps": true,
+  "limpiar_windows_old": false,
+  "optimizar_efectos_visuales": true,
+  "optimizar_energia": true,
+  "gestionar_inicio": true,
+  "desactivar_inicio_lista": [],
+  "optimizar_servicios": true,
+  "servicios_a_manual": [
+    "XblGameSave",
+    "XboxGipSvc",
+    "XboxNetApiSvc",
+    "MapsBroker",
+    "lfsvc",
+    "RetailDemo",
+    "Fax"
+  ],
+  "optimizar_red": true,
+  "reducir_telemetria": true,
+  "desactivar_game_dvr": true,
+  "optimizar_unidades": true
+}

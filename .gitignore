@@ -1,0 +1,22 @@
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs generados por el limpiador (se conserva la carpeta con .gitkeep)
+logs/*.log
+
+# PowerShell / editores
+*.tmp
+*~
+.vscode/
+.idea/
+
+# Paquetes / entorno (por si se amplía a Python en el futuro)
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+build/

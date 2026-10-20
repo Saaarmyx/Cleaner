@@ -1,0 +1,15 @@
+{
+  "limpiar_papelera": true,
+  "limpiar_tmp": true,
+  "limpiar_caches_usuario": true,
+  "limpiar_historial_bash": true,
+  "limpiar_apt": true,
+  "limpiar_journal": true,
+  "journal_dias": 7,
+  "limpiar_logs_sistema": true,
+  "limpiar_nucleos_antiguos": true,
+  "nucleos_a_conservar": 2,
+  "optimizar_telemetria": true,
+  "desactivar_snapd_si_inactivo": true,
+  "optimizar_trim": true
+}

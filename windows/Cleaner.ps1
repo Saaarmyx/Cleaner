@@ -36,14 +36,15 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Continue'
 
 # ---------- Estado global ----------
-$script:Root         = Split-Path -Parent $MyInvocation.MyCommand.Path
+$script:ScriptDir    = Split-Path -Parent $MyInvocation.MyCommand.Path
+$script:Root         = Split-Path -Parent $script:ScriptDir   # raiz del repo (config/ y logs/ compartidos)
 $script:Timestamp    = Get-Date -Format 'yyyyMMdd-HHmmss'
 $script:LogDir       = Join-Path $script:Root 'logs'
 $script:LogFile      = Join-Path $script:LogDir "cleaner-$script:Timestamp.log"
 $script:FreedBytes   = [long]0
 $script:Errores      = 0
 $script:Acciones     = @()
-$script:ConfigPath   = Join-Path $script:Root 'config.json'
+$script:ConfigPath   = Join-Path $script:Root 'config\windows.json'
 $script:Config       = @{}
 
 # ---------- Utilidades ----------
@@ -86,7 +87,7 @@ function Load-Config {
             $script:Config = $raw | ConvertFrom-Json -AsHashtable
             Write-Log "Configuracion cargada: $script:ConfigPath" 'OK'
         } catch {
-            Write-Log "config.json invalido, se usan valores por defecto. $($_.Exception.Message)" 'WARN'
+            Write-Log "config/windows.json invalido, se usan valores por defecto. $($_.Exception.Message)" 'WARN'
             $script:Config = @{}
         }
     }
@@ -443,7 +444,7 @@ function Invoke-OptimizePhase {
                 }
             }
             if ($autoDisable.Count -eq 0) {
-                Write-Log 'No hay entradas auto-configuradas para desactivar. Edita config.json -> desactivar_inicio_lista.' 'INFO'
+                Write-Log 'No hay entradas auto-configuradas para desactivar. Edita config/windows.json -> desactivar_inicio_lista.' 'INFO'
             }
         } catch {
             Write-Log "Inicio: $($_.Exception.Message)" 'WARN'

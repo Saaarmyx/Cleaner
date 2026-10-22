@@ -5,7 +5,7 @@
 
 ---
 
-## 🔀 Flujo de Trabajo
+## Flujo de Trabajo
 
 ### 1. Fork y Rama
 
@@ -33,18 +33,18 @@ git checkout -b feature/mi-mejora   # fix/, refactor/, docs/, style/, build/, ci
 <tipo>(<ámbito>): <descripción en imperativo y minúsculas>
 ```
 
-| Tipo | Uso |
-|------|-----|
-| `feat` | Nueva funcionalidad (limpieza, optimización, opción CLI, config) |
-| `fix` | Corrección de bug |
-| `refactor` | Reestructuración sin cambio de comportamiento |
-| `perf` | Mejora de rendimiento medible |
-| `style` | Formato (shellcheck, PSScriptAnalyzer), sin lógica |
-| `docs` | README, comentarios, ayuda (Get-Help) |
-| `build` | Empaquetado, CI, scripts de release |
-| `ci` | GitHub Actions, workflows |
-| `test` | Pruebas (bats, Pester) |
-| `revert` | Revierte commit anterior |
+| Tipo       | Uso                                                              |
+| ---------- | ---------------------------------------------------------------- |
+| `feat`     | Nueva funcionalidad (limpieza, optimización, opción CLI, config) |
+| `fix`      | Corrección de bug                                                |
+| `refactor` | Reestructuración sin cambio de comportamiento                    |
+| `perf`     | Mejora de rendimiento medible                                    |
+| `style`    | Formato (shellcheck, PSScriptAnalyzer), sin lógica               |
+| `docs`     | README, comentarios, ayuda (Get-Help)                            |
+| `build`    | Empaquetado, CI, scripts de release                              |
+| `ci`       | GitHub Actions, workflows                                        |
+| `test`     | Pruebas (bats, Pester)                                           |
+| `revert`   | Revierte commit anterior                                         |
 
 **Ámbitos Cleaner**: `windows`, `linux`, `config`, `shared`.
 
@@ -64,6 +64,7 @@ git push origin feature/mi-mejora
 Abre PR hacia `Saaarmyx/Saaarmyx:main` (carpeta `Cleaner/`).
 
 **Checklist Pre-PR**:
+
 - [ ] `main` actualizado y rebaseado
 - [ ] Commits atómicos + Conventional Commits
 - [ ] **Windows**: `pwsh -c ". windows/Cleaner.ps1 -DryRun -Silent"` sin errores
@@ -75,18 +76,18 @@ Abre PR hacia `Saaarmyx/Saaarmyx:main` (carpeta `Cleaner/`).
 
 ---
 
-## 🖥️ Estándares PowerShell (Windows)
+## Estándares PowerShell (Windows)
 
-| Regla | Detalle |
-|-------|---------|
-| **Versión** | PowerShell 5.1+ (compatibilidad Windows 10/11) |
-| **Parámetros** | `param()` con tipos y validación (`ValidateSet`, `ValidateRange`) |
-| **Funciones** | `PascalCase`, patrón `Verb-Noun` donde aplique |
-| **Error Handling** | `try/catch/finally`; `$ErrorActionPreference = 'Stop'` al inicio |
-| **Ayuda nativa** | Comentarios `<# .SYNOPSIS ... .PARAMETER ... #>` para `Get-Help` |
-| **Ejecución** | Requiere Administrador (auto-elevación via `Launch-Cleaner.bat`) |
-| **Limpieza** | `PSScriptAnalyzer` (si disponible) antes de commit |
-| **Encoding** | UTF-8 sin BOM, LF |
+| Regla              | Detalle                                                           |
+| ------------------ | ----------------------------------------------------------------- |
+| **Versión**        | PowerShell 5.1+ (compatibilidad Windows 10/11)                    |
+| **Parámetros**     | `param()` con tipos y validación (`ValidateSet`, `ValidateRange`) |
+| **Funciones**      | `PascalCase`, patrón `Verb-Noun` donde aplique                    |
+| **Error Handling** | `try/catch/finally`; `$ErrorActionPreference = 'Stop'` al inicio  |
+| **Ayuda nativa**   | Comentarios `<# .SYNOPSIS ... .PARAMETER ... #>` para `Get-Help`  |
+| **Ejecución**      | Requiere Administrador (auto-elevación via `Launch-Cleaner.bat`)  |
+| **Limpieza**       | `PSScriptAnalyzer` (si disponible) antes de commit                |
+| **Encoding**       | UTF-8 sin BOM, LF                                                 |
 
 ### Ejemplo Función PowerShell
 
@@ -135,19 +136,19 @@ function Clear-ThumbnailCache {
 
 ---
 
-## 🐧 Estándares Bash (Linux)
+## Estándares Bash (Linux)
 
-| Regla | Detalle |
-|-------|---------|
-| **Shebang** | `#!/usr/bin/env bash` |
-| **Modo estricto** | `set -uo pipefail` (**sin** `set -e`) |
-| **Indentación** | 4 espacios, **sin tabs** |
-| **Comillas** | Siempre en expansiones: `"$var"`, `"${arr[@]}"` |
-| **Variables** | `local` en funciones; `readonly` para constantes |
-| **Lectura config** | `jq` o `python3` (uno de los dos; Ubuntu trae python3) |
-| **Mensajes** | Funciones `ui_*` centralizadas (colores, banners, prompts) |
-| **Validación** | `bash -n cleaner.sh` + `shellcheck` antes de commit |
-| **Encoding** | UTF-8, LF |
+| Regla              | Detalle                                                    |
+| ------------------ | ---------------------------------------------------------- |
+| **Shebang**        | `#!/usr/bin/env bash`                                      |
+| **Modo estricto**  | `set -uo pipefail` (**sin** `set -e`)                      |
+| **Indentación**    | 4 espacios, **sin tabs**                                   |
+| **Comillas**       | Siempre en expansiones: `"$var"`, `"${arr[@]}"`            |
+| **Variables**      | `local` en funciones; `readonly` para constantes           |
+| **Lectura config** | `jq` o `python3` (uno de los dos; Ubuntu trae python3)     |
+| **Mensajes**       | Funciones `ui_*` centralizadas (colores, banners, prompts) |
+| **Validación**     | `bash -n cleaner.sh` + `shellcheck` antes de commit        |
+| **Encoding**       | UTF-8, LF                                                  |
 
 ### Estructura Script Linux
 
@@ -181,9 +182,10 @@ main "$@"
 
 ---
 
-## ⚙️ Configuración (JSON)
+## Configuración (JSON)
 
 Ambos scripts leen su config en `config/`:
+
 - `config/windows.json` — Interruptores Windows
 - `config/linux.json` — Interruptores Linux
 
@@ -225,9 +227,10 @@ jq empty config/linux.json config/windows.json
 
 ---
 
-## 🐛 Reportar Issues
+## Reportar Issues
 
 Incluye:
+
 - **SO y versión**: Windows 10/11 (build), Ubuntu 20.04+/Debian 11+
 - **Arquitectura**: `amd64` / `arm64`
 - **Shell**: PowerShell 5.1 / 7.x / Bash 5.x
@@ -238,7 +241,7 @@ Incluye:
 
 ---
 
-## 🔒 Seguridad
+## Seguridad
 
 - **Windows**: Crea punto de restauración (modos Completo/Avanzado). Nunca borra documentos. Lista de servicios conservadora. `Windows.old` desactivado por defecto en config.
 - **Linux**: `--dry-run` obligatorio para previsualizar. Confirmación explícita antes de eliminar kernels. Avisos si Timeshift no está instalado. Nunca borra documentos ni caché activa >24h en `/tmp`. Conserva kernel en ejecución.
@@ -246,13 +249,13 @@ Incluye:
 
 ---
 
-## 📜 Licencia de Contribuciones
+## Licencia de Contribuciones
 
 Al enviar PR, aceptas que tu código se licencie bajo **MIT** (misma licencia del proyecto). Ver [LICENSE](./LICENSE).
 
 ---
 
-## 🤔 Dudas
+## Dudas
 
 - GitHub Discussions / Issues.
 - Discord `saaarmyx` o @saaarmyx en GitHub.

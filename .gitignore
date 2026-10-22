@@ -1,22 +1,30 @@
+# Cleaner — .gitignore
+# Logs generados
+logs/
+*.log
+
+# Config local (si se crean overrides)
+config/*.local.json
+
 # Windows
+*.exe
+*.msi
 Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
 
-# Logs generados por el limpiador (se conserva la carpeta con .gitkeep)
-logs/*.log
+# Linux
+*.deb
+*.rpm
 
-# PowerShell / editores
-*.tmp
-*~
-.vscode/
+# OS
+.DS_Store
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
 .idea/
 
-# Paquetes / entorno (por si se amplía a Python en el futuro)
-__pycache__/
-*.pyc
-.venv/
-node_modules/
-dist/
-build/
+# Temporales
+*.tmp
+*.swp
+*~

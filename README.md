@@ -1,6 +1,17 @@
 # PC Cleaner — Mantenimiento lógico avanzado para Windows y Ubuntu/Debian
 
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)](https://github.com/PowerShell/PowerShell)
+[![Bash](https://img.shields.io/badge/Bash-5.0%2B-4EAA25?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://windows.com)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-20.04%2B-E95420?logo=ubuntu&logoColor=white)](https://ubuntu.com)
+[![License](https://img.shields.io/badge/License-MIT-8B5CF6)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Activo-22C55E)]()
+
+---
+
 Limpieza de temporales/cachés y optimización del sistema (arranque, energía, red, servicios, telemetría). 100% nativo en ambos sistemas: PowerShell + Batch en Windows, Bash en Linux. Sin dependencias externas.
+
+---
 
 ## Estructura
 
@@ -17,6 +28,8 @@ Cleaner/
 │   └── cleaner.sh       # Script principal (limpieza profunda + optimización + informe)
 └── logs/                # Logs por ejecución (generado; compartido por ambos SO)
 ```
+
+---
 
 ## Windows
 
@@ -48,6 +61,8 @@ Parámetros: `-DryRun` (simula), `-Silent` (sin preguntas), `-SinPuntoRestauraci
 
 Crea punto de restauración (Completo/Avanzado), nunca borra documentos, lista de servicios conservadora, `-DryRun` para previsualizar. `Windows.old` desactivado por defecto en `config/windows.json`.
 
+---
+
 ## Ubuntu/Debian
 
 ### Requisitos
@@ -77,9 +92,13 @@ Modos: `Rapido` (tmp + papelera + cachés de usuario + apt + DNS) · `Completo` 
 
 `--dry-run` para previsualizar, confirmación explícita antes de eliminar kernels, avisos si Timeshift no está instalado, nunca borra documentos ni la caché activa de más de 24h en `/tmp`, y conserva siempre el kernel en ejecución.
 
+---
+
 ## Configuración
 
 Cada script lee su propio archivo JSON plano en `config/`. Las claves que no estén presentas usan el valor por defecto según el modo (igual que en Windows: el config sobreescribe al modo).
+
+---
 
 ## Convenciones
 

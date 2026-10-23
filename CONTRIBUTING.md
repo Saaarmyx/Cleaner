@@ -1,261 +1,96 @@
-# Guía de Contribución — Cleaner
+# Contribuir a Cleaner
 
-> Mantenimiento lógico avanzado para Windows (PowerShell) y Ubuntu/Debian (Bash).  
-> 100% nativo, sin dependencias externas.
+Gracias por pasarte por aquí. Cleaner es un proyecto personal, pero las mejoras bien explicadas son bienvenidas: un modo de limpieza nuevo, una salvaguarda para una distro concreta o una corrección en la documentación.
 
----
+## Antes de empezar
 
-## Flujo de Trabajo
+Si el cambio es grande (un modo nuevo, una reestructuración de `config/` o un cambio de comportamiento en la limpieza), abre primero un issue. Así acordamos el enfoque antes de que escribas código y evitamos trabajo duplicado.
 
-### 1. Fork y Rama
+Para errores pequeños o mejoras de documentación puedes ir directo al Pull Request.
 
-```bash
-# 1. Fork en GitHub
-# 2. Clona TU fork
-git clone https://github.com/TU-USUARIO/Saaarmyx.git
-cd Saaarmyx/Cleaner
+## Flujo de trabajo
 
-# 3. Añade upstream
-git remote add upstream https://github.com/Saaarmyx/Saaarmyx.git
+1. Haz un fork del repositorio.
+2. Crea una rama desde `master`:
 
-# 4. Rama desde main
-git checkout main
-git pull upstream main
-git checkout -b feature/mi-mejora   # fix/, refactor/, docs/, style/, build/, ci/, test/
-```
+   ```bash
+   git checkout -b feat/nuevo-modo-limpieza
+   ```
 
-> **Convención**: `feature/`, `fix/`, `refactor/`, `docs/`, `style/`, `build/`, `ci/`, `test/` + `kebab-case`.  
-> Ejemplos: `feature/linux-snapd-cleanup`, `fix/windows-restore-point`, `docs/readme-config-schema`.
+   Usa prefijos `feat/`, `fix/` o `docs/` y nombres en kebab-case.
 
-### 2. Commits — Conventional Commits
+3. Haz commits atómicos siguiendo [Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/):
 
-```text
-<tipo>(<ámbito>): <descripción en imperativo y minúsculas>
-```
+   ```text
+   feat(linux): añade limpieza de caché de paquetes Snap
+   fix(windows): evita borrar la papelera si está en uso
+   docs(readme): aclara el requisito de jq en Debian
+   ```
 
-| Tipo       | Uso                                                              |
-| ---------- | ---------------------------------------------------------------- |
-| `feat`     | Nueva funcionalidad (limpieza, optimización, opción CLI, config) |
-| `fix`      | Corrección de bug                                                |
-| `refactor` | Reestructuración sin cambio de comportamiento                    |
-| `perf`     | Mejora de rendimiento medible                                    |
-| `style`    | Formato (shellcheck, PSScriptAnalyzer), sin lógica               |
-| `docs`     | README, comentarios, ayuda (Get-Help)                            |
-| `build`    | Empaquetado, CI, scripts de release                              |
-| `ci`       | GitHub Actions, workflows                                        |
-| `test`     | Pruebas (bats, Pester)                                           |
-| `revert`   | Revierte commit anterior                                         |
+4. Abre un Pull Request contra `master` explicando qué cambia y cómo lo probaste.
 
-**Ámbitos Cleaner**: `windows`, `linux`, `config`, `shared`.
+## Entorno de desarrollo
+
+No hay dependencias que instalar. Solo necesitas el sistema donde vas a probar:
+
+- **Windows:** PowerShell 5.1+ y una terminal elevada.
+- **Linux:** `bash`, `sudo` y `jq` o `python3`.
+- **Opcional:** [ShellCheck](https://www.shellcheck.net/) para revisar el script de Linux.
+
+Comprobaciones mínimas antes de enviar:
 
 ```bash
-git add windows/Cleaner.ps1 config/windows.json
-git commit -m "feat(windows): añade limpieza de caché de DirectX Shader"
-```
-
-**Reglas**: Un commit = un cambio atómico. `git add <rutas-explicitas>`. Mensaje español, imperativo, minúsculas, ≤ 72 chars.
-
-### 3. Push y Pull Request
-
-```bash
-git push origin feature/mi-mejora
-```
-
-Abre PR hacia `Saaarmyx/Saaarmyx:main` (carpeta `Cleaner/`).
-
-**Checklist Pre-PR**:
-
-- [ ] `main` actualizado y rebaseado
-- [ ] Commits atómicos + Conventional Commits
-- [ ] **Windows**: `pwsh -c ". windows/Cleaner.ps1 -DryRun -Silent"` sin errores
-- [ ] **Linux**: `bash -n linux/cleaner.sh && shellcheck linux/cleaner.sh` (si shellcheck instalado)
-- [ ] **Config**: JSON válido (`jq empty config/windows.json config/linux.json`)
-- [ ] README actualizado si cambia parámetros, modos, config o seguridad
-- [ ] Sin `logs/`, `*.log`, temporales en diff
-- [ ] PR explica **qué y por qué**
-
----
-
-## Estándares PowerShell (Windows)
-
-| Regla              | Detalle                                                           |
-| ------------------ | ----------------------------------------------------------------- |
-| **Versión**        | PowerShell 5.1+ (compatibilidad Windows 10/11)                    |
-| **Parámetros**     | `param()` con tipos y validación (`ValidateSet`, `ValidateRange`) |
-| **Funciones**      | `PascalCase`, patrón `Verb-Noun` donde aplique                    |
-| **Error Handling** | `try/catch/finally`; `$ErrorActionPreference = 'Stop'` al inicio  |
-| **Ayuda nativa**   | Comentarios `<# .SYNOPSIS ... .PARAMETER ... #>` para `Get-Help`  |
-| **Ejecución**      | Requiere Administrador (auto-elevación via `Launch-Cleaner.bat`)  |
-| **Limpieza**       | `PSScriptAnalyzer` (si disponible) antes de commit                |
-| **Encoding**       | UTF-8 sin BOM, LF                                                 |
-
-### Ejemplo Función PowerShell
-
-```powershell
-<#
-.SYNOPSIS
-    Limpia la caché de miniaturas e iconos de Windows.
-
-.DESCRIPTION
-    Elimina archivos de caché de miniaturas (thumbcache_*.db) e iconos (iconcache_*.db)
-    de los perfiles de usuario. Requiere reinicio de explorer.exe para efecto completo.
-
-.PARAMETER DryRun
-    Solo muestra qué se eliminaría sin borrar nada.
-
-.EXAMPLE
-    Clear-ThumbnailCache -DryRun
-#>
-function Clear-ThumbnailCache {
-    param(
-        [switch]$DryRun
-    )
-
-    try {
-        $paths = @(
-            "$env:LOCALAPPDATA\Microsoft\Windows\Explorer\thumbcache_*.db",
-            "$env:LOCALAPPDATA\Microsoft\Windows\Explorer\iconcache_*.db"
-        )
-
-        foreach ($pattern in $paths) {
-            Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue | ForEach-Object {
-                if ($DryRun) {
-                    Write-Host "[DRY-RUN] Eliminaría: $($_.FullName)"
-                } else {
-                    Remove-Item -Path $_.FullName -Force -ErrorAction Stop
-                    Write-Host "Eliminado: $($_.FullName)"
-                }
-            }
-        }
-    } catch {
-        Write-Error "Error limpiando caché de miniaturas: $($_.Exception.Message)"
-        throw
-    }
-}
-```
-
----
-
-## Estándares Bash (Linux)
-
-| Regla              | Detalle                                                    |
-| ------------------ | ---------------------------------------------------------- |
-| **Shebang**        | `#!/usr/bin/env bash`                                      |
-| **Modo estricto**  | `set -uo pipefail` (**sin** `set -e`)                      |
-| **Indentación**    | 4 espacios, **sin tabs**                                   |
-| **Comillas**       | Siempre en expansiones: `"$var"`, `"${arr[@]}"`            |
-| **Variables**      | `local` en funciones; `readonly` para constantes           |
-| **Lectura config** | `jq` o `python3` (uno de los dos; Ubuntu trae python3)     |
-| **Mensajes**       | Funciones `ui_*` centralizadas (colores, banners, prompts) |
-| **Validación**     | `bash -n cleaner.sh` + `shellcheck` antes de commit        |
-| **Encoding**       | UTF-8, LF                                                  |
-
-### Estructura Script Linux
-
-```bash
-#!/usr/bin/env bash
-set -uo pipefail
-
-# === Config ===
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly CONFIG_FILE="$SCRIPT_DIR/../config/linux.json"
-
-# === Helpers ===
-source "$SCRIPT_DIR/../lib/ui.sh"      # ui_info, ui_warn, ui_confirm, etc.
-source "$SCRIPT_DIR/../lib/config.sh"  # read_config_json()
-
-# === Funciones ===
-clean_tmp() { ... }
-clean_journal() { ... }
-optimize_trim() { ... }
-
-# === Main ===
-main() {
-    parse_args "$@"
-    load_config
-    run_selected_modes
-    print_report
-}
-
-main "$@"
-```
-
----
-
-## Configuración (JSON)
-
-Ambos scripts leen su config en `config/`:
-
-- `config/windows.json` — Interruptores Windows
-- `config/linux.json` — Interruptores Linux
-
-**Formato**: Clave → `true`/`false`/`valor`. Claves ausentes = default según modo.
-**Validación**: `jq empty config/*.json` debe pasar.
-
----
-
-## 🧪 Desarrollo y Testing
-
-### Windows (PowerShell)
-
-```powershell
-# Dry-run completo (simula sin tocar nada)
-.\windows\Cleaner.ps1 -Mode Avanzado -DryRun -Silent
-
-# Solo sintaxis
-pwsh -n .\windows\Cleaner.ps1
-
-# PSScriptAnalyzer (si instalado)
-Invoke-ScriptAnalyzer -Path .\windows\Cleaner.ps1, .\windows\lib\*.ps1
-```
-
-### Linux (Bash)
-
-```bash
-# Dry-run
-sudo ./linux/cleaner.sh --modo Avanzado --dry-run
-
-# Sintaxis
+# Sintaxis del script de Linux
 bash -n linux/cleaner.sh
 
-# Shellcheck
-shellcheck linux/cleaner.sh
+# Simulación: no debe borrar nada
+sudo ./linux/cleaner.sh --dry-run
 
-# Config JSON
-jq empty config/linux.json config/windows.json
+# Análisis estático, si tienes ShellCheck
+shellcheck linux/cleaner.sh
 ```
 
----
+En Windows, ejecuta siempre primero una simulación:
 
-## Reportar Issues
+```powershell
+.\windows\Cleaner.ps1 -Mode Completo -DryRun
+```
 
-Incluye:
+## Estándares de código
 
-- **SO y versión**: Windows 10/11 (build), Ubuntu 20.04+/Debian 11+
-- **Arquitectura**: `amd64` / `arm64`
-- **Shell**: PowerShell 5.1 / 7.x / Bash 5.x
-- **Modo ejecutado**: `Rapido` / `Completo` / `Avanzado`
-- **Flags**: `--dry-run`, `--silencioso`, `--sin-optimizar`, etc.
-- **Salida esperada vs real**
-- **Log relevante** (`logs/cleaner-*.log` o `logs/cleaner-linux-*.log`)
+- **Bash:** `set -uo pipefail`, funciones en snake_case, mensajes en español y salida por `log`.
+- **PowerShell:** `Set-StrictMode -Version Latest`, funciones en `Verb-Noun` y parámetros con `ValidateSet` cuando corresponda.
+- **Configuración:** las claves nuevas deben tener un valor por defecto sensato y documentarse en el README.
+- **Formato:** respeta `.editorconfig` (UTF-8, LF, 4 espacios; 2 en JSON).
+- **Tests:** el repositorio no tiene suite automatizada. Toda contribución debe incluir al menos una prueba manual descrita en el PR y pasar `--dry-run` sin errores.
 
----
+## Checklist del Pull Request
 
-## Seguridad
+- [ ] El cambio está explicado y justificado.
+- [ ] `bash -n linux/cleaner.sh` pasa sin errores (si tocaste Linux).
+- [ ] `--dry-run` / `-DryRun` termina sin borrar nada.
+- [ ] Las claves nuevas de configuración tienen valor por defecto.
+- [ ] Actualicé `README.md` y `CHANGELOG.md` si el comportamiento visible cambió.
+- [ ] No incluí logs, rutas personales ni credenciales.
+- [ ] El commit sigue Conventional Commits.
 
-- **Windows**: Crea punto de restauración (modos Completo/Avanzado). Nunca borra documentos. Lista de servicios conservadora. `Windows.old` desactivado por defecto en config.
-- **Linux**: `--dry-run` obligatorio para previsualizar. Confirmación explícita antes de eliminar kernels. Avisos si Timeshift no está instalado. Nunca borra documentos ni caché activa >24h en `/tmp`. Conserva kernel en ejecución.
-- **Ambos**: `-DryRun`/`--dry-run` para previsualizar sin efectos.
+## Proceso de revisión
 
----
+Reviso los Pull Requests cuando puedo, sin plazos fijos. Si el cambio es grande, puede que tarde en sentarme con calma a probarlo en Windows y Linux. Te responderé con dudas o comentarios en el propio PR.
 
-## Licencia de Contribuciones
+## Acuerdo de contribución
 
-Al enviar PR, aceptas que tu código se licencie bajo **MIT** (misma licencia del proyecto). Ver [LICENSE](./LICENSE).
+No hay CLA. Al enviar una contribución aceptas que se incorpore al proyecto bajo **Apache License 2.0** (`Apache-2.0`), la misma licencia del repositorio.
 
----
+## Código de conducta
 
-## Dudas
+- Trata a las demás personas con respeto, también cuando no compartas su criterio.
+- Crítica el código, no a quien lo escribió.
+- No publiques datos personales, rutas privadas ni información de terceros.
+- Si alguien reporta un problema de seguridad, no lo expongas en público antes de que haya una corrección.
 
-- GitHub Discussions / Issues.
-- Discord `saaarmyx` o @saaarmyx en GitHub.
+Con eso basta. No hace falta un documento más largo para recordar que detrás de cada issue hay una persona.
+
+## Licencia
+
+Las contribuciones quedan bajo **Apache License 2.0** (`Apache-2.0`). Consulta [LICENSE](LICENSE) y [NOTICE](NOTICE).
